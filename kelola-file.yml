@@ -1,0 +1,27 @@
+- name: Latihan kelola file
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Buat folder baru
+      file:
+        path: /tmp/latihan-ansible
+        state: directory   # pastikan folder ada
+
+    - name: Buat file teks
+      copy:
+        content: "Ini file buatan Ansible!\nBelajar otomasi itu seru."
+        dest: /tmp/latihan-ansible/catatan.txt
+
+    - name: Baca isi file
+      command: cat /tmp/latihan-ansible/catatan.txt
+      register: isi_file
+
+    - name: Tampilkan isi file
+      debug:
+        msg: "{{ isi_file.stdout }}"
+
+    - name: Hapus file (coba ubah ke absent)
+      file: 
+        path: /tmp/latihan-ansible/catatan.txt
+        state: absent  # ganti 'absent' untuk hapus

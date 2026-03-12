@@ -1,0 +1,52 @@
+Vagrant.configure("2") do |config|
+
+  # Matikan auto update guest additions
+  config.vbguest.auto_update = false if Vagrant.has_plugin?("vagrant-vbguest")
+
+  # ==============================
+  # VM 1 - Web Server
+  # ==============================
+  config.vm.define "web" do |web|
+    web.vm.box      = "generic/ubuntu2204"
+    web.vm.hostname = "webserver"
+
+    # Network - private network antar VM
+    web.vm.network "private_network", ip: "192.168.121.10"
+
+    # Provider libvirt
+    web.vm.provider :libvirt do |lv|
+      lv.memory = 1024   # 1GB RAM
+      lv.cpus   = 1
+    end
+
+    # Provisioning awal (opsional)
+    web.vm.provision "shell", inline: <<-SHELL
+      echo "==> Web Server siap!"
+      apt-get update -qq
+    SHELL
+  end
+
+  # ==============================
+  # VM 2 - Database Server
+  # ==============================
+  config.vm.define "db" do |db|
+    db.vm.box      = "generic/ubuntu2204"
+    db.vm.hostname = "dbserver"
+
+    # Network - private network antar VM
+    db.vm.network "private_network", ip: "192.168.121.11"
+
+    # Provider libvirt
+    db.vm.provider :libvirt do |lv|
+      lv.memory = 1024   # 1GB RAM
+      lv.cpus   = 1
+    end
+
+    # Provisioning awal (opsional)
+    db.vm.provision "shell", inline: <<-SHELL
+      echo "==> DB Server siap!"
+      apt-get update -qq
+    SHELL
+  end
+
+end

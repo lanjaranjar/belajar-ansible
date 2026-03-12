@@ -1,0 +1,16 @@
+- name: Hello World
+  hosts: localhost
+  connection: local   # pakai local, tidak perlu SSH
+
+  tasks:
+    - name: Tampilkan pesan
+      debug:
+        msg: "Halo, ini Ansible pertamaku!"
+
+    - name: Tampilkan tanggal hari ini
+      command: date
+      register: hasil_date   # simpan output ke variabel
+
+    - name: Print tanggal
+      debug:
+        msg: "Sekarang: {{ hasil_date.stdout }}"

@@ -1,0 +1,22 @@
+- name: Latihan loop
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Buat beberapa folder sekaligus
+      file:
+        path: /tmp/{{ item }}
+        state: directory
+      loop:
+        - folder-alpha
+        - folder-beta
+        - folder-gamma
+
+    - name: Print daftar buah
+      debug:
+        msg: "Buah: {{ item }}"
+      loop:
+        - Mangga
+        - Apel
+        - Jeruk
+        - Durian

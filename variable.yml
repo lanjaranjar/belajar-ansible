@@ -1,0 +1,23 @@
+- name: Latihan variabel
+  hosts: localhost
+  connection: local
+
+  vars:
+    nama: "Budi"
+    umur: 25
+    is_admin: true
+
+  tasks:
+    - name: Sapa pengguna
+      debug:
+        msg: "Halo {{ nama }}, umur {{ umur }} tahun!"
+
+    - name: Pesan khusus admin
+      debug:
+        msg: "{{ nama }} adalah admin sistem"
+      when: is_admin == true   # hanya jalan jika kondisi terpenuhi
+
+    - name: Pesan bukan admin
+      debug:
+        msg: "{{ nama }} adalah user biasa"
+      when: is_admin == false
