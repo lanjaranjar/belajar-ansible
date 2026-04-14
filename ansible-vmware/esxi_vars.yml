@@ -1,0 +1,5 @@
+vcenter_hostname: "10.10.10.2"
+vcenter_username: "root"
+vcenter_password: "@bcd1234"
+vcenter_validate_certs: false
+datacenter: "ha-datacenter"

@@ -1,0 +1,18 @@
+---
+- name: Test koneksi ESXi
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Cek info ESXi
+      community.vmware.vmware_about_info:
+        hostname: "10.10.10.2"
+        username: "root"
+        password: "@bcd1234"
+        validate_certs: false
+      delegate_to: localhost
+      register: esxi_info
+
+    - name: Tampilkan info ESXi
+      debug:
+        var: esxi_info
