@@ -1,19 +1,17 @@
 ---
-- name: Test koneksi ESXi
+- name: Cek Datastore ESXi
   hosts: localhost
   gather_facts: false
-
   tasks:
-    - name: Cek info ESXi
-      community.vmware.vmware_about_info:
+    - name: Cek datastore
+      community.vmware.vmware_datastore_info:
         hostname: "10.10.10.2"
         username: "root"
         password: "@bcd1234"
         validate_certs: false
       delegate_to: localhost
-      register: esxi_info
+      register: ds
 
-    - name: Tampilkan info ESXi
+    - name: Tampilkan datastore
       debug:
-        var: esxi_info
-    
+        msg: "{{ ds }}"
