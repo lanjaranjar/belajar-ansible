@@ -1,5 +1,5 @@
 ---
-- name: Cek Datastore ESXi
+- name: Cek ESXi Info
   hosts: localhost
   gather_facts: false
   tasks:
@@ -15,3 +15,17 @@
     - name: Tampilkan datastore
       debug:
         msg: "{{ ds }}"
+
+    - name: Cek portgroup
+      community.vmware.vmware_portgroup_info:
+        hostname: "10.10.10.2"
+        username: "root"
+        password: "@bcd1234"
+        validate_certs: false
+        esxi_hostname: "10.10.10.2"
+      delegate_to: localhost
+      register: net
+
+    - name: Tampilkan network
+      debug:
+        msg: "{{ net }}"

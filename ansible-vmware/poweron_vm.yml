@@ -1,0 +1,15 @@
+- name: Power On VM
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Power on VM
+      community.vmware.vmware_guest_powerstate:
+        hostname: "192.168.1.23"
+        username: "root"
+        password: "@bcd1234"
+        validate_certs: false
+        name: "VM1"
+        state: powered-off
+      delegate_to: localhost
+
+

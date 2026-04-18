@@ -1,0 +1,48 @@
+- name: Deploy VM ke ESXi
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Deploy VM
+      community.vmware.vmware_guest:
+        hostname: "192.168.1.23"
+        username: "root"
+        password: "@bcd1234"
+        validate_certs: false          # ← uncomment
+        datacenter: "ha-datacenter"
+        folder: "/vm"                  # ← simplified untuk standalone ESXi
+        name: "VM1"
+        datastore: "datastore1"
+        guest_id: ubuntu64Guest
+        hardware:
+          num_cpus: 2
+          memory_mb: 4096
+        disk:
+          - size_gb: 50
+            type: thin
+            datastore: "datastore1"
+        networks:
+          - name: "VM Network"
+            device_type: vmxnet3
+        cdrom:                         # ← tambahkan ISO agar bisa boot
+          - controller_number: 0
+            unit_number: 0
+            type: iso
+            iso_path: "[datastore1] ubuntu-24.04.4-live-server-amd64.iso"
+            state: present
+        state: present
+      delegate_to: localhost
+      register: vm
+
+    - name: Power on VM
+      community.vmware.vmware_guest_powerstate:
+        hostname: "192.168.1.23"
+        username: "root"
+        password: "@bcd1234"
+        validate_certs: false
+        name: "VM1"
+        state: powered-on
+      delegate_to: localhost
+
+    - name: Tampilkan hasil
+      debug:
+        msg: "{{ vm }}"
