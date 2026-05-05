@@ -1,0 +1,2 @@
+PROXMOX_SERVER   = "root@192.168.100.17"
+ANSIBLE_REPO_DIR = "/opt/belajar-ansible/ansible-proxmox"
