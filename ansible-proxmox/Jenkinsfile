@@ -1,3 +1,68 @@
-git add Jenkinsfile
-git commit -m "fix: complete Jenkinsfile"
-git push origin main
+pipeline {
+    agent any
+
+    environment {
+        PROXMOX_SERVER   = "root@192.168.100.17"
+        ANSIBLE_REPO_DIR = "/opt/belajar-ansible/ansible-proxmox"
+        ANSIBLE_PLAYBOOK = "deployment.yml"
+        CREDENTIAL_FILE  = "credential.yml"
+    }
+
+    stages {
+
+        stage('Pull Latest Repo') {
+            steps {
+                echo ">>> Pull repo terbaru di Proxmox..."
+                sshagent(credentials: ['proxmox-ssh']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${PROXMOX_SERVER} '
+                            cd ${ANSIBLE_REPO_DIR} &&
+                            git pull origin main
+                        '
+                    """
+                }
+            }
+        }
+
+        stage('Validate Playbook') {
+            steps {
+                echo ">>> Syntax check playbook..."
+                sshagent(credentials: ['proxmox-ssh']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${PROXMOX_SERVER} '
+                            cd ${ANSIBLE_REPO_DIR} &&
+                            ansible-playbook ${ANSIBLE_PLAYBOOK} \
+                                --syntax-check \
+                                --extra-vars "@${CREDENTIAL_FILE}"
+                        '
+                    """
+                }
+            }
+        }
+
+        stage('Deploy VM') {
+            steps {
+                echo ">>> Menjalankan playbook Ansible di Proxmox..."
+                sshagent(credentials: ['proxmox-ssh']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${PROXMOX_SERVER} '
+                            cd ${ANSIBLE_REPO_DIR} &&
+                            ansible-playbook ${ANSIBLE_PLAYBOOK} \
+                                --extra-vars "@${CREDENTIAL_FILE}"
+                        '
+                    """
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "✅ VM berhasil di-deploy!"
+        }
+        failure {
+            echo "❌ Deploy gagal. Cek log di atas."
+        }
+    }
+}
