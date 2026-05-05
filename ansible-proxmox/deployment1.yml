@@ -1,0 +1,69 @@
+---
+- name: Deploy VM Ubuntu di Proxmox (API Token)
+  hosts: localhost
+  gather_facts: no
+
+  vars_files:
+    - credential.yml
+
+  vars:
+    vm_id: 101
+    vm_name: vm-ubuntu
+    vm_memory: 2048
+    vm_cores: 2
+    vm_storage: local-lvm
+    vm_iso: "local:iso/ubuntu-26.04-live-server-amd64__1_.iso"
+    vm_bridge: vmbr0
+
+  tasks:
+
+    - name: Debug Variables (WAJIB MUNCUL BENAR)
+      debug:
+        msg:
+          - "USER: {{ proxmox_api_user }}"
+          - "TOKEN: {{ proxmox_api_token_id }}"
+          - "HOST: {{ proxmox_api_host }}"
+
+    - name: Create VM
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ proxmox_api_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ vm_id }}"
+        name: "{{ vm_name }}"
+        memory: "{{ vm_memory }}"
+        cores: "{{ vm_cores }}"
+        sockets: 1
+        ostype: l26
+        scsihw: virtio-scsi-pci
+
+        # FIX: Gunakan 'scsi' bukan 'virtio' agar konsisten dengan scsihw dan boot order
+        scsi:
+          scsi0: "{{ vm_storage }}:20,format=raw"
+
+        ide:
+          ide2: "{{ vm_iso }},media=cdrom"
+
+        net:
+          net0: "virtio,bridge={{ vm_bridge }}"
+
+        # FIX: boot order dan bootdisk harus match dengan nama disk di atas (scsi0)
+        boot: "order=scsi0;ide2"
+        bootdisk: scsi0
+        agent: 1
+        onboot: 1
+        state: present
+        validate_certs: false
+
+    - name: Start VM
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ proxmox_api_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ vm_id }}"
+        state: started
+        validate_certs: false
