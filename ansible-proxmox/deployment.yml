@@ -7,7 +7,7 @@
     - credential.yml
 
   vars:
-    vm_id: 101
+    vm_id: 103
     vm_name: vm-ubuntu
     vm_memory: 2048
     vm_cores: 2
