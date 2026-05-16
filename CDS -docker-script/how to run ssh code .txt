@@ -1,0 +1,14 @@
+cara run nya tinggal: bash docker-manager.sh stop --> ini nanti passwordnya inteartive
+ 
+#   ./docker_manager.sh stop                    # Stop all (interactive password)
+
+#   ./docker_manager.sh start                   # Start all (interactive password)
+
+#   ./docker_manager.sh status                  # Check status (interactive password)
+
+#   ./docker_manager.sh stop -p mypassword      # Stop all (auto password via sshpass)
+
+#   ./docker_manager.sh start -p mypassword     # Start all (auto password via sshpass)
+
+#   ./docker_manager.sh status -p mypassword    # Check status (auto password via sshpass)
+ 
